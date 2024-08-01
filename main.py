@@ -2,9 +2,16 @@ import random
 import time
 
 class MarketMaking:
-    def __init__(self, balance=500, n=3):
+    def __init__(self, difficulty, balance=500):
+        self.difficulty = difficulty
         self.balance = balance
-        self.n = n
+
+        if self.difficulty == "easy" or self.difficulty == "medium":
+            self.n = 3
+        elif self.difficulty == "hard":
+            self.n = 4
+        else:
+            raise ValueError("Invalid input. Please set difficulty as 'easy', 'medium', or 'hard'.")
 
         print(f"Initial balance: {self.balance}")
 
@@ -12,7 +19,7 @@ class MarketMaking:
         print("-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
         print("")
 
-    def generate_cards(self, difficulty):
+    def generate_cards(self):
         self.lower = random.randint(0, 10)
         self.upper = random.randint(15, 25)
 
@@ -21,9 +28,9 @@ class MarketMaking:
         self.cards = []
         for i in range(self.n):
             card = random.randint(self.lower, self.upper)
-            if card < self.upper and difficulty == "medium":
+            if card < self.upper and self.difficulty == "medium":
                 card += 0 if random.random() < 0.5 else 0.5
-            elif card < self.upper and difficulty == "hard":
+            elif card < self.upper and self.difficulty == "hard":
                 card += round(random.random(), 1)
 
             self.cards.append(card)
@@ -103,9 +110,6 @@ class MarketMaking:
                     self.balance -= 50
                     correct = False
                 print(f"PnL: {difference}, Balance: {self.balance}")
-        else:
-            self.get_response()
-            pass
 
         end = time.time()
         time_taken = end - start
@@ -117,11 +121,11 @@ class MarketMaking:
 
         return time_taken, correct
 
-    def play(self, difficulty, rounds=None):
+    def play(self, rounds=None):
         if rounds == None:
-            if difficulty == "easy":
+            if self.difficulty == "easy":
                 rounds = 3
-            elif difficulty == "medium":
+            elif self.difficulty == "medium":
                 rounds = 5
             else:
                 rounds = 10
@@ -129,7 +133,7 @@ class MarketMaking:
         total_time = 0
         correct_response = 0
         for i in range(rounds):
-            self.generate_cards(difficulty)
+            self.generate_cards()
             self.generate_question()
             time_taken, correct = self.get_response()
             total_time += time_taken
@@ -140,12 +144,12 @@ class MarketMaking:
         print(f"Correct Responses: {correct_response} / {rounds}")
 
         with open('stats.txt', 'a') as file:
-            file.write(f"Game difficulty: {difficulty}\n")
+            file.write(f"Game difficulty: {self.difficulty}\n")
             file.write(f"Average time taken: {average_time:.2f} seconds\n")
             file.write(f"Correct Responses: {correct_response} / {rounds}\n\n")
 
 
 
 if __name__ == "__main__":
-    marketmaking = MarketMaking()
-    marketmaking.play("hard", 3)
+    marketmaking = MarketMaking("hard")
+    marketmaking.play()
