@@ -12,7 +12,7 @@ class MarketMaking:
         print("-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
         print("")
 
-    def generate_cards(self):
+    def generate_cards(self, difficulty):
         self.lower = random.randint(0, 10)
         self.upper = random.randint(15, 25)
 
@@ -20,7 +20,13 @@ class MarketMaking:
 
         self.cards = []
         for i in range(self.n):
-            self.cards.append(random.randint(self.lower, self.upper))
+            card = random.randint(self.lower, self.upper)
+            if card < self.upper and difficulty == "medium":
+                card += 0 if random.random() < 0.5 else 0.5
+            elif card < self.upper and difficulty == "hard":
+                card += round(random.random(), 1)
+
+            self.cards.append(card)
         return self.cards
 
     def generate_question(self, chance=0.3):
@@ -46,9 +52,9 @@ class MarketMaking:
 
         while True:
             try:
-                quantity = int(input("Quantity: "))
+                quantity = float(input("Quantity: "))
                 if quantity < 0:
-                    print("Invalid input. Please enter a positive integer.")
+                    print("Invalid input. Please enter a positive number.")
                     continue
                 side = input("Side: ")
                 if side == "buy" or side == "sell":
@@ -68,7 +74,7 @@ class MarketMaking:
                 print(f"Actual: {self.cards}")
                 while True:
                     try:
-                        balance = int(input("Balance: "))
+                        balance = float(input("Balance: "))
                         break
                     except ValueError:
                         print("Invalid input. Please enter a valid number.")
@@ -88,7 +94,7 @@ class MarketMaking:
                 print(f"Actual: {self.cards}")
                 while True:
                     try:
-                        balance = int(input("Balance: "))
+                        balance = float(input("Balance: "))
                         break
                     except ValueError:
                         print("Invalid input. Please enter a valid number.")
@@ -111,19 +117,19 @@ class MarketMaking:
 
         return time_taken, correct
 
-    def play(self, difficulty):
-
-        if difficulty == "easy":
-            rounds = 3
-        elif difficulty == "medium":
-            rounds = 5
-        else:
-            rounds = 10
+    def play(self, difficulty, rounds=None):
+        if rounds == None:
+            if difficulty == "easy":
+                rounds = 3
+            elif difficulty == "medium":
+                rounds = 5
+            else:
+                rounds = 10
 
         total_time = 0
         correct_response = 0
         for i in range(rounds):
-            self.generate_cards()
+            self.generate_cards(difficulty)
             self.generate_question()
             time_taken, correct = self.get_response()
             total_time += time_taken
@@ -142,4 +148,4 @@ class MarketMaking:
 
 if __name__ == "__main__":
     marketmaking = MarketMaking()
-    marketmaking.play(3)
+    marketmaking.play("hard", 3)
