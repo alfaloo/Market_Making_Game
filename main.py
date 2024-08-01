@@ -1,5 +1,6 @@
 import random
 import time
+from colorama import Fore, Style
 
 class MarketMaking:
     def __init__(self, difficulty, balance=500):
@@ -13,7 +14,7 @@ class MarketMaking:
         else:
             raise ValueError("Invalid input. Please set difficulty as 'easy', 'medium', or 'hard'.")
 
-        print(f"Initial balance: {self.balance}")
+        print(f"Initial balance: " + Fore.BLUE + str(self.balance) + Style.RESET_ALL)
 
         print("")
         print("-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#")
@@ -72,11 +73,13 @@ class MarketMaking:
 
         if side == "buy":
             if quantity * self.ask > self.balance:
-                print(f"Buy limit exceeded, -50 penalty")
-                self.balance -= 50
+                print(Fore.RED + "Buy limit exceeded, -50 penalty" + Style.RESET_ALL)
+                difference = -50
+                self.balance += difference
+                correct = False
             else:
                 actual = sum(self.cards)
-                difference = quantity * actual - quantity * self.ask
+                difference = round(quantity * actual - quantity * self.ask, 2)
                 self.balance += difference
                 print(f"Actual: {self.cards}")
                 while True:
@@ -86,17 +89,18 @@ class MarketMaking:
                     except ValueError:
                         print("Invalid input. Please enter a valid number.")
                 if (balance != self.balance):
-                    print(f"Incorrect balance calculation, -50 penalty")
+                    print(Fore.RED + "Incorrect balance calculation, -50 penalty" + Style.RESET_ALL)
                     self.balance -= 50
                     correct = False
-                print(f"PnL: {difference}, Balance: {self.balance}")
         elif side == "sell":
             if quantity * (self.upper - self.bid) > self.balance:
-                print(f"Sell limit exceeded, -50 penalty")
-                self.balance -= 50
+                print(Fore.RED + "Sell limit exceeded, -50 penalty" + Style.RESET_ALL)
+                difference = -50
+                self.balance += difference
+                correct = False
             else:
                 actual = sum(self.cards)
-                difference = quantity * self.bid - quantity * actual
+                difference = round(quantity * self.bid - quantity * actual, 2)
                 self.balance += difference
                 print(f"Actual: {self.cards}")
                 while True:
@@ -106,10 +110,11 @@ class MarketMaking:
                     except ValueError:
                         print("Invalid input. Please enter a valid number.")
                 if (balance != self.balance):
-                    print(f"Incorrect balance calculation, -50 penalty")
+                    print(Fore.RED + "Incorrect balance calculation, -50 penalty" + Style.RESET_ALL)
                     self.balance -= 50
                     correct = False
-                print(f"PnL: {difference}, Balance: {self.balance}")
+
+        print(f"PnL: {round(difference, 2)}, Balance: " + Fore.BLUE + str(self.balance) + Style.RESET_ALL)
 
         end = time.time()
         time_taken = end - start
