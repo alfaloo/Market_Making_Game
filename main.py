@@ -93,7 +93,7 @@ class MarketMaking:
                     self.balance -= 50
                     correct = False
         elif side == "sell":
-            if quantity * (self.upper - self.bid) > self.balance:
+            if quantity * (self.n * self.upper - self.bid) > self.balance:
                 print(Fore.RED + "Sell limit exceeded, -50 penalty" + Style.RESET_ALL)
                 difference = -50
                 self.balance += difference
